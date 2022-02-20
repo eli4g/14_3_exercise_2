@@ -110,11 +110,9 @@ async function getEpisodes(id) {
 
   // TODO: return array-of-episode-info, as described in docstring above
 
-  const response = await axios.get(`http://api.tvmaze.com/shows/${id}/episodes'`,{
-    headers: {"Access-Control-Allow-Origin": "*"} })
-  console.log(response);
-  return await axios.get(`http://api.tvmaze.com/shows/${id}/episodes'`);
 
+
+  return await axios.get(`http://api.tvmaze.com/shows/${id}/episodes`);
     
 }
 
@@ -123,22 +121,19 @@ async function getEpisodes(id) {
 function populateEpisodes(episodes) {
 
   
-  const $episodeList = $("#episode-list");
-  $episodeList.empty();
+  $("#episodes-list").empty();
 
   for (let episode of episodes) {
-    console.log(episode);
-
     
 
+    let $item = $(`<li>${episode}</li>`);
 
-    let $item = $(`<li>${episode.number}-${episode.name}</li>`);
-
-    $episodeList.append($item);
+    $("#episodes-list").append($item);
 
 
     
   }
+  $("#episodes-area").append($("#episodes-list"));
   $("#episodes-area").show();
 }
 
@@ -148,19 +143,31 @@ function populateEpisodes(episodes) {
  *    - get list of matching shows and show in shows list
  */
 
-$(".episode-button").on("click", async function showEpisodes (evt) {
+$("#shows-list").on("click","button", async function showEpisodes (evt) {
   evt.preventDefault();
+
+
+  let episodeArray = [];
 
   let episodeId = $(this).attr('id');
 
-  console.log("button clicked");
+  
  
 
   let episodes = await getEpisodes(episodeId);
 
-  
   console.log(episodes);
 
+  for (episode of episodes.data){
 
-  populateEpisodes(episodes);
+    episodeArray.push(`${episode.name} - Season: ${episode.season}, Episode: ${episode.number}`)
+
+  }
+
+
+  
+  
+
+
+  populateEpisodes(episodeArray);
 });
